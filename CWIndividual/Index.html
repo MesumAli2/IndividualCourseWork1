@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects </title>
+  
+    <!--Styling for the Application -->
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+        th, td {
+          padding: 15px;
+        }
+        .subjects {
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .search__input{
+          align-self: start;
+          width: 250px;
+        background: #fff;
+        height: 30px;
+        border-radius: 30px;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.8s;
+        box-shadow: 4px 4px 6px 0 rgba(255,255,255,.3),
+         -4px -4px 6px 0 rgba(116, 125, 136, .2), 
+        inset -4px -4px 6px 0 rgba(255,255,255,.2),
+        inset 4px 4px 6px 0 rgba(0, 0, 0, .2);    
+        }
+        .subject-card {
+          padding: 2%;
+          flex-grow: 1;
+          flex-basis: 16%;
+          flex-direction: row;
+          flex-wrap: wrap;
+          display: flex; /* so child elements can use flexbox stuff too! */
+        }
+        .subject-image img {
+          width: 160px;
+          height: 100px; 
+          align-items: center;
+        }
+        .cart-image img{
+          width: 80px;
+          height: 50px; 
+        }
+        .subject-filter {
+          display: flex;
+        }
+        .subject-filter h1 {
+          flex-grow: 1;
+        }
+        .sort {
+          display: flex;
+          margin: 10px;
+        }
+      
+        .prod{
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;         margin: 20px;
+               }
+
+        .radiobuttons{
+          margin: 10px;
+        }
+        .radiobuttons2{
+          margin: 10px;
+        }
+
+        .cartProd{
+          margin-top: 10px;
+          margin-right: 20px;
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px 3px;  
+          }       
+          @import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@600&display=swap");
+          .center {
+            position: relative;
+            padding: 50px 50px;
+            background: #fff;
+            border-radius: 10px;
+          }
+        
+          .center .inputbox {
+            position: relative;
+            width: 300px;
+            height: 50px;
+            margin-bottom: 50px;
+          }
+          .center .inputbox input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            border: 2px solid #000;
+            outline: none;
+            background: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.2em;
+          }
+        </style>
+        <head>
+
+
+<link rel ="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"></linkrel>
+<script src="subjects.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+
+
+<div id="subjects">
+  <header> 
+    <!--Calls showCheckout which trigers Between true and false to display the lessons or cart page-->
+  <button style="border: 2px solid black;" v-on:click='showCheckout' v-if ="checkoutBtnStat">
+    {{ cartItemCount }} 
+    <span class="fas fa-cart-plus"></span>View Cart
+  </button>
+  <button  style="border: 2px solid black;" disabled="disabled" v-else> <span class="fas fa-cart-plus"></span>View Cart
+  </button>
+  </header>
+
+    <main> 
+        <!-- If showSubject true then display lessons page -->    
+    <div v-if='showSubject'>
+    <nav class="subject-filter">
+    <h2 style="margin-left: 200px; color:rgb(24, 23, 23); border: rgb(51, 51, 51); text-transform: uppercase;" v-text="sitename"></h2>
+    <!-- Radio buttons uses for sorting-->
+    <div class="radiobuttons">
+      <fieldset id="group1">
+        <!--When checked radio buttons called thier specified sort functions -->
+      <input type="radio"  name="group1" v-on:click="sortByLesson()">
+      <label>Lesson</label><br>
+    <input type="radio" name="group1" v-on:click="sortByPrice()">
+    <label>Price</label>
+    <input type="radio" name="group1" v-on:click="sortByLocation()">
+    <label>Location</label>
+      </fieldset>
+      </div>
+      <!--Radio buttons to define the order of the sort-->
+    <div class="radiobuttons2">
+    <fieldset id="group2"> 
+        <input type="radio" id="css" name="group2" checked="checked" v-on:click="changeFormatfalse">
+      <label for="css">Ascending</label><br>
+      <input type="radio" id="css" name="group2" v-on:click="changeFormat()">
+      <label for="css">Descending</label><br>
+    </fieldset>
+    </div>
+
+      <div class="sort">
+        <!-- Search bar to displaed the querryed result such as lesson-->
+        <div class="collection-sort">
+            <input placeholder="search" class="search__input" v-model="searchbar" type="text">
+        </div>
+      </div>
+    </nav>
+
+
+
+    <section class="subjects">
+    <!-- the code for the subject page -->    
+    <div class="subject-card">
+      <!-- Loops thru the List of lessons -->
+      <div class="prod" v-for="subject in searchTable(searchbar, subjects)">
+
+      <!--Subject information for each lesson-->
+      <h2 v-text="subject.title"></h2> 
+      <div class="subject-image">
+      <figure>
+        <img v-bind:src="subject.image">
+      </figure>
+      </div>
+      <p v-html="subject.location"></p>
+      <p>Price: {{subject.price}}</p>
+      <p>Space: {{subject.availableInventory - cartCount(subject)}}</p>
+      <button style="align-items: center; border: 2px black;" class="fas fa-shopping-basket" v-on:click='addtocart(subject)' v-if='canAddToCart(subject)'>Add to cart</button>
+      <button style="align-items: center; border: 2px black;" class="fas fa-shopping-basket" disabled="disabled" v-else>Add to cart</button>
+      <span v-if='subject.availableInventory === cartCount(subject)'>All out!</span> 
+      <span v-else-if="subject.availableInventory - cartCount(subject) < 5">
+        Only {{subject.availableInventory - cartCount(subject)}} left!!
+      </span>
+      <span v-else>Buy Now</span>
+      <!-- rating -->
+      <div>
+        <span v-for='n in subject.rating'>★</span>
+        <span v-for="n in 5-subject.rating ">☆</span>
+      </div> 
+      </div>
+      </div>
+      </div>
+      </section>
+
+
+
+      <!-- The code for the Cart and Checkout page -->  
+    <div v-else>
+      <!--Cart Section-->
+      <h2 style="border:gray; text-transform: uppercase; color: rgb(70, 69, 69); text-align:center;">Lessons in cart</h2>
+      <div class="subject-card">
+        <!--Loops thru the lessons in the cart-->
+        <div class="cartProd" v-for = "subject in checkcountSubs(cart)">
+          <!--Subject information present in the cart-->
+      <h3>{{subject.title}}</h3>   
+      <h4> Quantity In cart : {{cartCount(subject)}}</h4> 
+      <div class="cart-image">
+        <figure>
+          <img v-bind:src="subject.image">
+        </figure>
+        </div>
+        <p v-html="subject.description"></p>
+        <p>Spaces: {{subject.availableInventory}}</p>
+        <p>Price: {{subject.price}}</p>
+        <p v-html="subject.location">Location: </p>
+        <p>Total Price: {{subject.price * cartCount(subject)}}</p>
+        <!--On clicking the button triggers removeItem function to remove the seleceted lesson from cart-->
+        <button style="border: 1px solid black;" v-on:click= "removeItem(subject,cart)">Remove product</button>
+      </div>
+      </div>
+
+      <!--Checkout section-->
+        <div class="center">
+        <h2 style="border:gray; text-transform: uppercase; color: rgb(70, 69, 69); text-align:center;">Checkout</h2>
+        <form action="inputvox"> 
+          <!-- Display the error message when name Input is not alphabetical format-->
+          <p style="size: 10; color: red;" v-if="validateFormInputName != true">Enter name in alphabets</p>
+          <span>Name</span>
+        <div class="inputbox">
+            <!-- This input field is bound to 'name' in the 'order' object --> 
+         <input  v-model="order.firstName"/>
+        </div>
+          <!--Shows the error if the phone number is not in number phone format-->
+          <p  style="size: 10; color: red;" v-if="validateFormInputPhone != true">Enter phone number in correct format <br> exp : 0501234567</p>
+          <span>Phone number:</span>
+          <div class="inputbox">
+            <!-- This input field is bound to 'name' in the 'order' object --> 
+            <input v-model="order.phonenumber"/>
+          </div>
+          <div class="inputbox">
+            <!--Place order buttons gets enabled if Name and phonenumber are valid-->
+            <button style="border: 2px solid black;" v-on:click='submitForm' v-if='validateFormInputName && validateFormInputPhone'>PlaceOrder</button>
+            <button style="border: 2px solid black;" disabled="disabled" v-else>PlaceOrder</button>
+          </div>
+          </form>
+          </div>
+          </div>
+      </main>
+      </div>
+
+<script>
+
+
+let app = new Vue({
+    el:'#subjects',
+            data:{
+              searchbar: '',
+              subjects: subjects,
+              showSubject: true, 
+              sitename: 'Lessons',
+              sortState : false,
+              sortNature : false,
+              checkCart: true,
+              order:{
+                firstName: '',
+                lastName: '',
+                phonenumber:'',       
+              },
+                cart:[],
+            },
+            methods:{ 
+              //Adds lessson to the cart array 
+              addtocart: function(lesson){
+                this.cart.push(lesson);
+              //console.log("I am Cart" + this.cart)
+               },
+               //Removes the given lesson from the cart 
+               removeItem: function(lesson, cartsize){
+                this.cart = this.cart.filter(item => item !== lesson)
+               }
+               ,
+              //Triggers betweeen true and false when called
+              showCheckout(){ 
+              this.showSubject = this.showSubject ? false : true 
+              },
+              //Submits the order by providing alret message 
+              submitForm() {
+                  this.order.firstName = ""
+                  this.order.phonenumber = ""
+                  alert("Order Submitted!")
+                  location.reload()
+                
+              },
+              //Checks if the avaiblable Inventory is greater the cartcount 
+              canAddToCart(lesson) {
+                    return lesson.availableInventory > this.cartCount(lesson);
+                },
+                //Gets the count for given subjectid
+                cartCount(id) {
+                    let count = 0;
+                    for (let i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i] === id) {
+                            count++;
+                        }
+                    }
+                    return count;
+                }, 
+                //Sorts the lessons by location in chossen order and returns the sorted array
+                sortByLocation(){
+                  if(this.sortNature == false){
+                //Then compare function that sorts location in assecnding order 
+                function comparelesson(a, b){
+                  if(a.location > b.location)
+                    return 1;
+                  if(a.location < b.location)
+                  return -1;
+                  return0; }   
+                }if(this.sortNature == true){
+                function comparelesson(a, b){
+                  if(a.location < b.location)
+                    return 1;
+                  if(a.location > b.location)
+                  return -1;
+                  return0;
+                }
+              }
+              return subjects.sort(comparelesson)
+            }
+                ,
+                //Sorts the lessons by subject title in chossen order and returns the sorted array
+                sortByLesson(){
+                  if(this.sortNature == false){
+                //Then compare func that sorts lesson in assecnding order 
+                function comparelesson(a, b){
+                  if(a.title > b.title)
+                    return 1;
+                  if(a.title < b.title)
+                  return -1;
+                  return0; }   
+                }if(this.sortNature == true){
+                function comparelesson(a, b){
+                  if(a.title < b.title)
+                    return 1;
+                  if(a.title > b.title)
+                  return -1;
+                  return0;
+                }
+              }
+               return this.subjects.sort(comparelesson)
+                }, 
+                //Sorts the lessons by price in chossen order and returns the sorted array
+                sortByPrice(){     
+                    if(this.sortNature == false){
+                        //The comparison function that defines the order low to high by comparing price values
+                        function compare(a, b) {
+                      return a.price - b.price
+                      }}
+                    if(this.sortNature == true){
+                      //The comparison function that defines the order High to low by comparing price values
+                      function compare(a, b) {
+                      return b.price - a.price
+                        }
+                      }
+                  return this.subjects.sort(compare)
+                }
+              ,
+              //Caled by the Descending radio button to change the sort nature object to true
+              changeFormat(){
+                  this.sortNature = true;
+              },
+              //Caled by the Ascending radio button to change the sort nature object to false
+              changeFormatfalse(){
+                    this.sortNature = false;
+              },
+            
+            //Searches throught the subject array and returns qureyyed result  
+            searchTable(value, data){
+              //Array to store searched subjects
+              var filterData = []
+              //loops through the subject array 
+              for(var i = 0; i < data.length; i++){
+                //To make the searched value not case sensitive
+                value = value.toLowerCase()
+                //Title and location in element in subject array
+                var title = data[i].title.toLowerCase()
+                var location = data[i].location.toLowerCase()
+                //if titile and location are found, subject is pushed to the new array
+                if(title.includes(value) || location.includes(value)){
+                  filterData.push(data[i])
+                 // console.log("Search Result: "+ data[i].title)
+                }
+              }
+                  return filterData
+            },
+            //Filters the list to remove same lesson in the cart and returns the filtered subjects in cart
+            checkcountSubs(list){
+              let subjectincart = (list) => list.filter((v,i) => list.indexOf(v) === i)
+              console.log("list size = "+ subjectincart(list))
+              return subjectincart(list);
+            }
+             },
+            computed:{
+              //Displays the current cart count 
+              cartItemCount: function(){
+                return this.cart.length || ''; 
+              },
+  
+              //Returns true if cart is greater then 0 used for enabling and disabling View cart button
+              checkoutBtnStat(){
+                if(this.cart.length > 0){
+                  return true
+                  this.checkCart = false;
+                }
+              },
+              //Validates the user name input in checkout section using regular expression if the name is in alphabetical format and returns true
+              validateFormInputName(){
+                //Validates user input using regular expression to validate usersname is in alphabets.
+                var regex = /^[a-zA-Z]+$/;
+                if(regex.test(this.order.firstName) == false){
+                  return false
+                  }
+                  //Verifys if username is not empty, null, or includes less then 4 chracters.
+                  if(this.order.firstName == "" || this.order.phonenumber == null || this.order.firstName.length < 4){
+                    return false
+                  }
+                  return true
+                },
+                //Validates the phone number  input using regular expression if the phone is in  numbers format and returns true
+                validateFormInputPhone(){
+                  //Validates phone number input using regular expression to validate Phone is in numbers.
+                  var regex = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+                  if(regex.test(this.order.phonenumber) == false){
+                    return false
+                  } 
+                  //Verifys if phone number is not empty, null.
+                  if(this.order.phonenumber == "" || this.order.phonenumber == null){
+                    return false
+                  } 
+                  return true
+                }
+            },
+        })
+
+        
+         
+
+
+</script>
+</html>
