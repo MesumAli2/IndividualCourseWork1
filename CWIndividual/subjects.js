@@ -39,7 +39,7 @@ let subjects = [
       "id": 1005,
       "title": "History",
       "location": "Istanbul <em>Downtown</em> Turkey.",
-      "price": 30.00,
+      "price": 34.00,
       "image": "images/history.png",
       "availableInventory": 5,
       "rating": 4
@@ -57,7 +57,7 @@ let subjects = [
       "id": 1007,
       "title": "French",
       "location": "Paris. France",
-      "price": 45.00,
+      "price": 40.00,
       "image": "images/french.png",
       "availableInventory": 5,
       "rating": 4
@@ -66,7 +66,7 @@ let subjects = [
       "id": 1008,
       "title": "Social Studies",
       "location": "Dubai U.A.E",
-      "price": 45.00,
+      "price": 38.00,
       "image": "images/social.png",
       "availableInventory": 5,
       "rating": 5
